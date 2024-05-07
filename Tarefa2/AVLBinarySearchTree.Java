@@ -1,14 +1,14 @@
 import java.util.*;
 
 
-public class OrderedBinarySearchTree extends BinarySearchTree {
-    public OrderedBinarySearchTree(int capacity) {
+public class AVLBinarySearchTree extends BinarySearchTree {
+    public AVLBinarySearchTree(int capacity) {
         super(capacity);
     }
 
     @Override
     public boolean insert(String val) {
-        boolean result = super.insert(val);
+        
         if (result)
             sort_heap();
         
@@ -19,7 +19,7 @@ public class OrderedBinarySearchTree extends BinarySearchTree {
     public boolean remove(String val) {
         boolean result = super.remove(val);
         if (result)
-            Arrays.sort(heap, Comparator.nullsLast(Comparator.naturalOrder()));
+            sort_heap();
         return result;
     }
 
@@ -44,6 +44,7 @@ public class OrderedBinarySearchTree extends BinarySearchTree {
             cnt += 1;
         }
 
+        System.out.println(Arrays.toString(aux));
         System.arraycopy(aux, 0, heap, 0, aux.length);
     }
 

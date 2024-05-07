@@ -1,20 +1,21 @@
+import java.util.*;
+
 public class BinarySearchTree {
     protected String[] heap;
-    protected String[] items;
     protected int size;
     protected int capacity;
+    protected int heigth;
 
     public BinarySearchTree(int capacity) {
         this.heap = new String[capacity];
-        this.items = new String[capacity];
         this.size = 0;
         this.capacity = capacity;
     }
 
-    public void insert(String val) {
+    public boolean insert(String val) {
         if (size == capacity) {
             System.out.println("Heap is full. Cannot insert more elements.");
-            return;
+            return false;
         }
         int ind = 0;
         boolean inserted = insert_aux(ind, val);
@@ -25,16 +26,22 @@ public class BinarySearchTree {
 
             if (comp > 0)
                 ind = (ind + 1) * 2;
-            else
+            else if (comp < 0)
                 ind = (ind * 2) + 1;
+            else
+                return false;
             
             inserted = insert_aux(ind, val);
         }
+        
 
         if (inserted)
         {
             size += 1;
+            return true;
         }
+
+        return false;
     }
 
     private boolean insert_aux(int index, String val)
@@ -42,42 +49,9 @@ public class BinarySearchTree {
         if (heap[index] == null)
         {
             heap[index] = val;
-            items[size] = val;
             return true;
         }
         return false;
-    }
-
-    public String extractMax() {
-        if (size == 0) {
-            return null;
-        }
-        String max = heap[0];
-        heap[0] = heap[size - 1];
-        size--;
-        heapifyDown(0);
-        return max;
-    }
-
-    private void heapifyDown(int index) {
-        int left = 2 * index + 1;
-        int right = 2 * index + 2;
-        int largest = index;
-
-        if (left < size && heap[left].compareTo(heap[largest]) > 0) {
-            largest = left;
-        }
-
-        if (right < size && heap[right].compareTo(heap[largest]) > 0) {
-            largest = right;
-        }
-
-        if (largest != index) {
-            String temp = heap[index];
-            heap[index] = heap[largest];
-            heap[largest] = temp;
-            heapifyDown(largest);
-        }
     }
 
     public boolean isEmpty() {
@@ -93,31 +67,65 @@ public class BinarySearchTree {
         if (index == -1) {
             return false;
         }
-        heap[index] = heap[size - 1];
-        size--;
-        heapifyDown(index);
+        
+        int aux_ind = index;
+        while (heap[aux_ind] != null)
+        {
+            heap[aux_ind] = heap[leftDown(aux_ind)];
+            aux_ind = leftDown(aux_ind);
+        }
+
+        size -= 1;
         return true;
+    }
+
+    protected int downMin(int initial_index)
+    {
+        int min_ind = leftDown(initial_index);
+        while (heap[min_ind] != null)
+        {
+            min_ind = leftDown(initial_index);
+        }
+        return up(min_ind);
+    }
+
+    protected int downMax(int initial_index)
+    {
+        int min_ind = rigthDown(initial_index);
+        while (heap[min_ind] != null)
+        {
+            min_ind = rigthDown(initial_index);
+        }
+        return up(min_ind);
+    }
+
+    protected int rigthDown(int index)
+    {
+        return index * 2 + 2;
+    }
+
+    protected int leftDown(int index)
+    {
+        return index * 2 + 1;
+    }
+
+    protected int up(int index)
+    {
+        if (index == 0)
+            return -1;
+        if (index%2 == 0)
+            return index/2 - 1;
+        return (index - 1)/2;
     }
 
     private int findIndex(String val) {
         for (int i = 0; i < size; i++) {
-            if (heap[i].equals(val)) {
+            if (heap[i] == null)
+                continue;
+            if (heap[i].equals(val)) 
                 return i;
-            }
         }
         return -1;
-    }
-
-    public boolean removeByValue(String val) {
-        for (int i = 0; i < size; i++) {
-            if (heap[i].equals(val)) {
-                heap[i] = heap[size - 1];
-                size--;
-                heapifyDown(i);
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -125,7 +133,7 @@ public class BinarySearchTree {
         StringBuilder sb = new StringBuilder();
         sb.append("digraph {\n");
 
-        if (size == 1)
+        if (size == 1 && heap[0] != null)
         {
             sb.append("\"" + 0 + " " + heap[0] + "\" ");
             sb.append("}");

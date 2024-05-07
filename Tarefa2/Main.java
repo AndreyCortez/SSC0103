@@ -4,9 +4,9 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        BinarySearchTree bst = new BinarySearchTree(1000);
-        OrderedBinarySearchTree obst = new OrderedBinarySearchTree(1000);
-        OrderedBinarySearchTree avlbst = new OrderedBinarySearchTree(1000);
+        BinarySearchTree bst = new BinarySearchTree(30);
+        OrderedBinarySearchTree obst = new OrderedBinarySearchTree(30);
+        OrderedBinarySearchTree avlbst = new OrderedBinarySearchTree(30);
 
         while (scanner.hasNext()) {
             String comando = scanner.next();
@@ -15,11 +15,11 @@ public class Main {
             if (comando.equals("i")) {
                 bst.insert(valor);
                 obst.insert(valor);
-                avlbst.insert(valor);
+                //avlbst.insert(valor);
             } else if (comando.equals("d")) {
                 bst.remove(valor);
                 obst.remove(valor);
-                avlbst.remove(valor);
+                //avlbst.remove(valor);
             } else {
                 System.out.println("Comando inválido.");
             }
