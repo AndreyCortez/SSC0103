@@ -1,12 +1,17 @@
 # SSC0103
 Programação Orientada a Objeto
 
+## Autores
+- Andrey Cortez Rufino - 11819487
+- Francyélio de Jesus Campos Lima - 13676537
+
 ## Instruções
 
 Para rodar o programa primeiro compile a database e ligue o servidor
 
 ```shell
 cd database
+mkdir bin
 make all
 python3 server.py
 ```
