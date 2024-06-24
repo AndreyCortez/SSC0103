@@ -16,24 +16,40 @@ JAVAC = javac
 # Executor Java
 JAVA = java
 
+# Verificar o sistema operacional
+OS := $(shell uname -s)
+
+# Configurações específicas para Windows
+ifeq ($(OS),Windows_NT)
+    PATH_SEP = ;
+    MKDIR = if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+    RM = if exist $(BIN_DIR) rmdir /S /Q $(BIN_DIR)
+    FIND_SRCS = $(shell dir /B /S $(SRC_DIR)\*.java)
+else
+    PATH_SEP = :
+    MKDIR = mkdir -p $(BIN_DIR)
+    RM = rm -rf $(BIN_DIR)
+    FIND_SRCS = $(shell find $(SRC_DIR) -name '*.java')
+endif
+
 # Flags de compilação
-JFLAGS = -d $(BIN_DIR) -sourcepath $(SRC_DIR) -cp $(LIB_DIR)\jackson-core-2.17.1.jar;$(LIB_DIR)\jackson-databind-2.17.1.jar;$(LIB_DIR)\jackson-annotations-2.17.1.jar
+JFLAGS = -d $(BIN_DIR) -sourcepath $(SRC_DIR) -cp $(LIB_DIR)/jackson-core-2.17.1.jar$(PATH_SEP)$(LIB_DIR)/jackson-databind-2.17.1.jar$(PATH_SEP)$(LIB_DIR)/jackson-annotations-2.17.1.jar
 
 # Flags de execução
-RFLAGS = -cp $(BIN_DIR);$(LIB_DIR)\jackson-core-2.17.1.jar;$(LIB_DIR)\jackson-databind-2.17.1.jar;$(LIB_DIR)\jackson-annotations-2.17.1.jar
+RFLAGS = -cp $(BIN_DIR)$(PATH_SEP)$(LIB_DIR)/jackson-core-2.17.1.jar$(PATH_SEP)$(LIB_DIR)/jackson-databind-2.17.1.jar$(PATH_SEP)$(LIB_DIR)/jackson-annotations-2.17.1.jar
 
 # Busca por todos os arquivos .java no diretório de origem
-SOURCES := $(shell dir /B /S $(SRC_DIR)\*.java)
+SOURCES := $(FIND_SRCS)
 
 # Objetivos padrão
 .PHONY: all run clean
 
 # Compilar todos os arquivos .java
-all: $(BIN_DIR)\$(MAIN).class
+all: $(BIN_DIR)/$(MAIN).class
 
 # Regra para compilar os arquivos .java
-$(BIN_DIR)\$(MAIN).class: $(SOURCES)
-	if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+$(BIN_DIR)/$(MAIN).class: $(SOURCES)
+	$(MKDIR)
 	$(JAVAC) $(JFLAGS) $(SOURCES)
 
 # Executar o programa
@@ -42,9 +58,4 @@ run: all
 
 # Limpar arquivos compilados
 clean:
-	if exist $(BIN_DIR) rmdir /S /Q $(BIN_DIR)
-
-# Exemplo de execução:
-# make          -> compila os arquivos .java
-# make run      -> executa o programa
-# make clean    -> limpa os arquivos compilados
+	$(RM)
