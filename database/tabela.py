@@ -14,7 +14,7 @@ if plataforma.startswith("win"):
 elif plataforma.startswith("linux"):
     comando = ["./programaTrab"]
 
-
+# Função usada para listar os arquivos disponíveis para a consulta
 def listar_arquivos(caminho):
     with os.scandir(caminho) as entradas:
         return [entrada.name for entrada in entradas if entrada.is_file()]
@@ -81,7 +81,10 @@ class Tabela:
             else:
                 entrada_padrao += " " + colunas[i] + " " + str(valores[i]) 
 
+
+        print(entrada_padrao)
         resultado = subprocess.run(comando, input=entrada_padrao, capture_output=True, text=True)
+        print(resultado.stdout)
         return tratar_resultado(resultado.stdout)
 
     def deletar_item(self, colunas, valores):
